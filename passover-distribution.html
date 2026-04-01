@@ -1,0 +1,2309 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>חלוקת מארזי פסח – באר שבע</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231C0A08'/%3E%3Cpath d='M7 5 L25 5 L19 18 L18 18 L18 23 L23 23 L23 27 L9 27 L9 23 L14 23 L14 18 L13 18 Z' fill='%23C9922A'/%3E%3Cpath d='M9 5 L23 5 L18 16 L14 16 Z' fill='%237B0D0D'/%3E%3Crect x='7' y='5' width='18' height='2' rx='1' fill='%23F0C05A'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  :root {
+    --gold: #C9922A;
+    --gold-light: #F0C05A;
+    --gold-pale: #FFF8E7;
+    --dark: #1A1208;
+    --dark2: #2D2010;
+    --brown: #5C3D1E;
+    --cream: #FDF6E8;
+    --text: #2D2010;
+    --text-muted: #7A6040;
+    --border: #E8D5A0;
+    --red: #C0392B;
+    --green: #1E7E34;
+    --radius: 14px;
+    --shadow: 0 4px 24px rgba(50,25,0,0.13);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Heebo', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+    direction: rtl;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, var(--dark) 0%, var(--dark2) 60%, #3D2910 100%);
+    padding: 28px 40px 22px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    border-bottom: 3px solid var(--gold);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+  }
+  .header-icon { filter: drop-shadow(0 2px 6px #C9922A88); }
+  .header-logo { height: 58px; width: auto; display: block; filter: brightness(0) invert(1) sepia(0.25) brightness(1.1); }
+  .header-title { flex: 1; }
+  .header-title h1 {
+    font-size: 1.7rem;
+    font-weight: 900;
+    color: var(--gold-light);
+    letter-spacing: 0.5px;
+    line-height: 1.15;
+  }
+  .header-title p {
+    font-size: 0.88rem;
+    color: #B09060;
+    margin-top: 3px;
+  }
+  .header-badge {
+    background: var(--gold);
+    color: var(--dark);
+    font-weight: 800;
+    font-size: 0.82rem;
+    padding: 5px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 0;
+    background: var(--dark2);
+    border-bottom: 2px solid var(--gold);
+    padding: 0 30px;
+  }
+  .tab {
+    padding: 13px 24px;
+    font-family: 'Heebo', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #B09060;
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.18s;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .tab:hover { color: var(--gold-light); }
+  .tab.active {
+    color: var(--gold-light);
+    border-bottom-color: var(--gold-light);
+    background: rgba(201,146,42,0.08);
+  }
+  .tab-icon { font-size: 1.1rem; }
+
+  /* MAIN */
+  .main { max-width: 1200px; margin: 0 auto; padding: 30px 24px 60px; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* SECTION CARDS */
+  .card {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1.5px solid var(--border);
+    margin-bottom: 22px;
+    overflow: hidden;
+  }
+  .card-header {
+    background: linear-gradient(90deg, var(--gold-pale), #fff);
+    padding: 16px 22px;
+    border-bottom: 1.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-header h2 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--brown);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-body { padding: 20px 22px; }
+
+  /* FORM ROW */
+  .form-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+  .form-group { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 180px; }
+  .form-group label { font-size: 0.82rem; font-weight: 600; color: var(--text-muted); }
+  .form-group input, .form-group select {
+    font-family: 'Heebo', sans-serif;
+    font-size: 0.93rem;
+    padding: 9px 13px;
+    border: 1.5px solid var(--border);
+    border-radius: 9px;
+    background: var(--cream);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .form-group input:focus, .form-group select:focus { border-color: var(--gold); }
+
+  /* BUTTONS */
+  .btn {
+    font-family: 'Heebo', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 9px 20px;
+    border-radius: 9px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  .btn-primary { background: var(--gold); color: var(--dark); }
+  .btn-primary:hover { background: #B5811F; transform: translateY(-1px); }
+  .btn-danger { background: #fff0ee; color: var(--red); border: 1.5px solid #f5c6c0; }
+  .btn-danger:hover { background: #ffe0dc; }
+  .btn-success { background: #e8f5e9; color: var(--green); border: 1.5px solid #b2dfdb; }
+  .btn-success:hover { background: #c8e6c9; }
+  .btn-ghost { background: var(--gold-pale); color: var(--brown); border: 1.5px solid var(--border); }
+  .btn-ghost:hover { background: #f0dba0; }
+  .btn-big {
+    font-size: 1.08rem;
+    padding: 13px 34px;
+    border-radius: 11px;
+    box-shadow: 0 4px 16px rgba(201,146,42,0.3);
+  }
+  .btn-big:hover { box-shadow: 0 6px 24px rgba(201,146,42,0.45); }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; }
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  th {
+    background: var(--gold-pale);
+    color: var(--brown);
+    font-weight: 700;
+    padding: 10px 13px;
+    text-align: right;
+    border-bottom: 2px solid var(--border);
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  td { padding: 10px 13px; border-bottom: 1px solid #F0E8D0; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--gold-pale); }
+
+  /* STATS ROW */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(50,25,0,0.07);
+  }
+  .stat-card .num {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .stat-card .lbl { font-size: 0.8rem; color: var(--text-muted); margin-top: 5px; font-weight: 500; }
+
+  /* PICKUP POINT */
+  .pickup-section {
+    background: linear-gradient(135deg, #FFF8E7, #FFF0CC);
+    border: 2px solid var(--gold);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    margin-bottom: 22px;
+  }
+  .pickup-section h3 { font-size: 1rem; font-weight: 700; color: var(--brown); margin-bottom: 12px; display: flex; align-items: center; gap: 7px; }
+
+  /* ASSIGNMENT RESULT */
+  .assignment-card {
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(50,25,0,0.08);
+    transition: box-shadow 0.2s;
+  }
+  .assignment-card:hover { box-shadow: 0 6px 24px rgba(50,25,0,0.14); }
+  .assignment-header {
+    background: linear-gradient(90deg, var(--dark2), #3D2910);
+    color: #fff;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .assignment-header .vol-name { font-size: 1.05rem; font-weight: 700; color: var(--gold-light); display: flex; align-items: center; gap: 8px; }
+  .pkg-badge {
+    background: var(--gold);
+    color: var(--dark);
+    font-weight: 800;
+    font-size: 0.85rem;
+    padding: 4px 13px;
+    border-radius: 20px;
+  }
+  .assignment-body { padding: 16px 20px; }
+  .delivery-list { list-style: none; }
+  .delivery-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--border);
+    font-size: 0.9rem;
+  }
+  .delivery-list li:last-child { border-bottom: none; }
+  .delivery-num {
+    width: 24px; height: 24px;
+    background: var(--gold);
+    color: var(--dark);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 800;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .delivery-info { flex: 1; }
+  .delivery-name { font-weight: 600; }
+  .delivery-addr { font-size: 0.82rem; color: var(--text-muted); }
+
+  /* MAP */
+  .map-container {
+    height: 320px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1.5px solid var(--border);
+    margin-top: 14px;
+    position: relative;
+    isolation: isolate;
+  }
+
+  /* GEOCODE STATUS */
+  .geo-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.78rem;
+    padding: 3px 9px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+  .geo-ok { background: #e8f5e9; color: var(--green); }
+  .geo-pending { background: #fff8e1; color: #E65100; }
+  .geo-fail { background: #fff0ee; color: var(--red); }
+
+  /* EMPTY STATE */
+  .empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+  .empty .emoji { font-size: 2.5rem; display: block; margin-bottom: 10px; }
+
+  /* SPINNER */
+  .spinner {
+    display: inline-block;
+    width: 18px; height: 18px;
+    border: 2.5px solid var(--border);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* DIVIDER */
+  .divider { border: none; border-top: 1.5px dashed var(--border); margin: 18px 0; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--dark);
+    color: var(--gold-light);
+    padding: 13px 28px;
+    border-radius: 30px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    z-index: 9999;
+    transition: transform 0.3s cubic-bezier(.4,1.6,.6,1);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    border: 1.5px solid var(--gold);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* IMPORT/EXPORT row */
+  .toolbar { display: flex; gap: 9px; flex-wrap: wrap; align-items: center; }
+
+  /* MAP LEGEND */
+  .map-legend {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    font-size: 0.8rem;
+    margin-top: 9px;
+    color: var(--text-muted);
+  }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  /* MANUAL TRANSFER */
+  .transfer-btn {
+    background: none; border: none; cursor: pointer;
+    font-size: 0.78rem; color: var(--text-muted);
+    padding: 3px 7px; border-radius: 6px;
+    transition: all 0.15s; white-space: nowrap;
+    font-family: 'Heebo', sans-serif;
+  }
+  .transfer-btn:hover { background: #FFF0CC; color: var(--brown); }
+  .copy-btn {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: #fff;
+    cursor: pointer;
+    font-size: 0.78rem;
+    padding: 3px 10px;
+    border-radius: 6px;
+    transition: all 0.2s;
+    font-family: 'Heebo', sans-serif;
+    white-space: nowrap;
+  }
+  .copy-btn:hover { background: rgba(255,255,255,0.25); }
+  .copy-btn.copied { background: var(--green); border-color: var(--green); }
+  .transfer-modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+    z-index: 500; display: flex; align-items: center; justify-content: center;
+  }
+  .transfer-modal {
+    background: #fff; border-radius: var(--radius); padding: 28px 28px 22px;
+    min-width: 320px; max-width: 420px; box-shadow: 0 12px 48px rgba(0,0,0,0.25);
+    border: 2px solid var(--gold);
+  }
+  .transfer-modal h3 { font-size: 1.05rem; font-weight: 700; color: var(--brown); margin-bottom: 16px; }
+  .transfer-modal label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 5px; }
+  .transfer-modal select {
+    width: 100%; font-family: 'Heebo', sans-serif; font-size: 0.93rem;
+    padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 9px;
+    background: var(--cream); color: var(--text); margin-bottom: 16px;
+  }
+  .transfer-modal .btn-row { display: flex; gap: 9px; justify-content: flex-end; }
+  /* SAVE INDICATOR */
+  .save-indicator {
+    color: rgba(240,192,90,0.75);
+    font-size: 0.78rem;
+  }
+  .save-dot {
+    display: inline-block;
+    width: 7px; height: 7px;
+    background: #4CAF50;
+    border-radius: 50%;
+    margin-left: 3px;
+    vertical-align: middle;
+  }
+
+  /* ===== RESPONSIVE / MOBILE ===== */
+
+  /* Tables: replace with card-style rows on mobile */
+  @media (max-width: 700px) {
+    /* Header */
+    .header { padding: 14px 14px 12px; gap: 10px; }
+    .header-logo { height: 38px; }
+    .header-title h1 { font-size: 1.1rem; }
+    .header-title p { display: none; }
+    .header-badge { font-size: 0.72rem; padding: 4px 10px; }
+    .save-indicator { font-size: 0.7rem; }
+
+    /* Tabs: equal-width, icon only on very small */
+    .tabs { padding: 0; }
+    .tab { flex: 1; justify-content: center; padding: 11px 6px; font-size: 0.8rem; gap: 4px; }
+
+    /* Main */
+    .main { padding: 14px 10px 70px; }
+
+    /* Cards */
+    .card-header { padding: 12px 14px; flex-wrap: wrap; gap: 8px; }
+    .card-header h2 { font-size: 0.95rem; }
+    .card-body { padding: 14px; }
+
+    /* Pickup section */
+    .pickup-section { padding: 14px; }
+    .pickup-section .form-row { flex-direction: column; }
+    .pickup-section .form-group { min-width: 0; }
+
+    /* Form rows: stack vertically */
+    .form-row { flex-direction: column; gap: 10px; }
+    .form-group { min-width: 0; width: 100%; }
+    .form-group input[type="number"] { max-width: 120px; }
+    .form-row .btn { width: 100%; justify-content: center; }
+
+    /* Toolbar buttons: wrap nicely */
+    .toolbar { gap: 6px; }
+    .toolbar .btn { font-size: 0.82rem; padding: 7px 12px; }
+
+    /* Tables: hide header, show as stacked cards */
+    table thead { display: none; }
+    table, tbody, tr, td { display: block; width: 100%; }
+    tr {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 10px;
+      padding: 10px 12px;
+      position: relative;
+    }
+    tr:hover td { background: transparent; }
+    td {
+      border: none;
+      padding: 3px 0;
+      font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    /* Hide index column on mobile */
+    td:first-child { display: none; }
+    /* Name cell: bold and larger */
+    td:nth-child(2) { font-size: 0.97rem; font-weight: 700; }
+    /* Action cell: position at top-left */
+    td:last-child {
+      position: absolute;
+      top: 8px;
+      left: 10px;
+      width: auto;
+      padding: 0;
+    }
+    td:last-child .btn-danger { padding: 4px 8px; font-size: 0.78rem; }
+    td:last-child .btn-ghost { padding: 4px 8px; font-size: 0.78rem; }
+
+    /* Stats */
+    .stats-row { grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 14px; }
+    .stat-card { padding: 12px 10px; }
+    .stat-card .num { font-size: 1.7rem; }
+    .stat-card .lbl { font-size: 0.72rem; }
+
+    /* Distribute button */
+    .btn-big { font-size: 0.97rem; padding: 12px 20px; width: 100%; justify-content: center; }
+
+    /* Assignment cards */
+    .assignment-header { padding: 12px 14px; }
+    .assignment-header .vol-name { font-size: 0.95rem; }
+    .pkg-badge { font-size: 0.78rem; padding: 3px 10px; }
+    .assignment-body { padding: 12px 14px; }
+
+    /* Delivery list items: tighter */
+    .delivery-list li { gap: 8px; padding: 9px 0; flex-wrap: wrap; }
+    .delivery-info { min-width: 0; flex: 1; }
+    .delivery-name { font-size: 0.88rem; }
+    .delivery-addr { font-size: 0.78rem; }
+    .transfer-btn { font-size: 0.85rem; padding: 5px 8px; }
+
+    /* Map: shorter on mobile */
+    .map-container { height: 220px; }
+
+    /* Modal: full-width on small screens */
+    .transfer-modal {
+      min-width: 0;
+      width: calc(100vw - 32px);
+      max-width: 100%;
+      padding: 20px 18px 16px;
+    }
+  }
+
+  /* Very small screens */
+  @media (max-width: 380px) {
+    .tab .tab-icon { font-size: 1.2rem; }
+    .tab span:not(.tab-icon) { display: none; }
+    .header-title h1 { font-size: 0.97rem; }
+  }
+
+  /* ===== PRINT ===== */
+  @media print {
+    .header, .tabs, #summary-stats,
+    #panel-distribute > div:first-of-type,
+    #distribute-controls,
+    .no-pkgs,
+    .transfer-btn, .geo-status,
+    .map-container, .map-legend,
+    .toast { display: none !important; }
+
+    .panel { display: block !important; }
+    #panel-addresses, #panel-volunteers { display: none !important; }
+
+    body { background: #fff; }
+    .main { padding: 0; box-shadow: none; }
+
+    .assignment-card {
+      break-after: page;
+      box-shadow: none;
+      border: 1.5px solid #ccc;
+      border-radius: 8px;
+      margin: 0;
+    }
+
+    .assignment-header {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    a { color: inherit; text-decoration: none; }
+  }
+
+  /* IMPORT TEXT MODAL */
+  .import-modal {
+    background: #fff; border-radius: var(--radius); padding: 26px 26px 20px;
+    width: min(560px, calc(100vw - 24px));
+    box-shadow: 0 12px 48px rgba(0,0,0,0.25);
+    border: 2px solid var(--gold);
+    max-height: 90vh; overflow-y: auto;
+  }
+  .import-modal h3 { font-size: 1.05rem; font-weight: 700; color: var(--brown); margin-bottom: 8px; }
+  .import-hint {
+    background: var(--gold-pale); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 13px; font-size: 0.82rem;
+    color: var(--text-muted); margin-bottom: 12px; line-height: 1.6;
+    font-family: monospace; direction: rtl; text-align: right;
+  }
+  .import-hint strong { color: var(--brown); font-family: 'Heebo', sans-serif; direction: rtl; display: block; margin-bottom: 4px; }
+  .import-textarea {
+    width: 100%; min-height: 160px; font-family: monospace;
+    font-size: 0.88rem; padding: 10px 12px;
+    border: 1.5px solid var(--border); border-radius: 9px;
+    background: var(--cream); color: var(--text);
+    resize: vertical; direction: rtl; margin-bottom: 12px;
+    outline: none;
+  }
+  .import-textarea:focus { border-color: var(--gold); }
+  .import-preview {
+    font-size: 0.82rem; color: var(--text-muted); margin-bottom: 14px;
+    min-height: 20px;
+  }
+  .import-preview .ok { color: var(--green); font-weight: 600; }
+  .import-preview .warn { color: #E65100; font-weight: 600; }
+  /* Export/Import buttons in header */
+  .header-actions { display: flex; gap: 7px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+  @media (max-width: 700px) {
+    .header-actions .btn { font-size: 0.72rem; padding: 5px 9px; }
+  }
+  /* IMPORT TEXT MODAL */
+  .import-modal {
+    background: #fff; border-radius: var(--radius); padding: 26px 26px 20px;
+    width: min(560px, calc(100vw - 24px));
+    box-shadow: 0 12px 48px rgba(0,0,0,0.25);
+    border: 2px solid var(--gold);
+    max-height: 90vh; overflow-y: auto;
+  }
+  .import-modal h3 { font-size: 1.05rem; font-weight: 700; color: var(--brown); margin-bottom: 8px; }
+  .import-hint {
+    background: var(--gold-pale); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 13px; font-size: 0.82rem;
+    color: var(--text-muted); margin-bottom: 12px; line-height: 1.6;
+    font-family: monospace; direction: rtl; text-align: right;
+  }
+  .import-hint strong { color: var(--brown); font-family: 'Heebo', sans-serif; direction: rtl; display: block; margin-bottom: 4px; text-align: right; }
+  .import-textarea {
+    width: 100%; min-height: 160px; font-family: monospace;
+    font-size: 0.88rem; padding: 10px 12px;
+    border: 1.5px solid var(--border); border-radius: 9px;
+    background: var(--cream); color: var(--text);
+    resize: vertical; direction: rtl; margin-bottom: 12px;
+    outline: none;
+  }
+  .import-textarea:focus { border-color: var(--gold); }
+  .import-preview { font-size: 0.82rem; margin-bottom: 14px; min-height: 20px; }
+  .import-preview .ok { color: var(--green); font-weight: 600; }
+  .import-preview .warn { color: #E65100; font-weight: 600; }
+  @media (max-width: 700px) {
+    .header-actions .btn { font-size: 0.72rem; padding: 5px 9px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-icon"><img src="kivunim-logo.png" alt="כיוונים" class="header-logo"></div>
+  <div class="header-title">
+    <h1>מבצע מארזי פסח – באר שבע</h1>
+    <p>ניהול חלוקה חכמה לפי אזורים ומתנדבים</p>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:7px">
+    <div class="header-actions">
+      <div class="header-badge">חג שמח 🌾</div>
+      <button class="btn btn-ghost" style="background:rgba(255,255,255,0.12);color:var(--gold-light);border-color:rgba(201,146,42,0.4);font-size:0.8rem;padding:5px 12px" onclick="exportData()" title="ייצוא כל הנתונים לקובץ JSON">⬇️ ייצוא</button>
+      <label class="btn btn-ghost" style="background:rgba(255,255,255,0.12);color:var(--gold-light);border-color:rgba(201,146,42,0.4);font-size:0.8rem;padding:5px 12px;cursor:pointer" title="ייבוא נתונים מקובץ JSON">⬆️ ייבוא<input type="file" accept=".json" style="display:none" onchange="importDataFile(event)"></label>
+    </div>
+    <div class="save-indicator" id="save-indicator"><span class="save-dot"></span> נשמר</div>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="tab active" onclick="switchTab('addresses')"><span class="tab-icon">📦</span> כתובות למסירה</button>
+  <button class="tab" onclick="switchTab('volunteers')"><span class="tab-icon">🙋</span> מתנדבים</button>
+  <button class="tab" onclick="switchTab('distribute')"><span class="tab-icon">🗺️</span> חלוקה חכמה</button>
+</nav>
+
+<div class="main">
+
+  <!-- ===== TAB: ADDRESSES ===== -->
+  <div class="panel active" id="panel-addresses">
+    <div class="pickup-section">
+      <h3>📍 נקודת איסוף מרכזית</h3>
+      <div class="form-row">
+        <div class="form-group" style="flex:2">
+          <label>כתובת נקודת האיסוף</label>
+          <input type="text" id="pickup-addr" placeholder="לדוגמה: רחוב הרצל 10, באר שבע" value="רחוב הרצל 1, באר שבע">
+        </div>
+        <button class="btn btn-ghost" onclick="geocodePickup()">📍 אמת כתובת</button>
+        <span id="pickup-status"></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2>➕ הוסף כתובת למסירה</h2>
+        <div class="toolbar">
+          <button class="btn btn-ghost" onclick="openImportText()">📥 ייבוא מטקסט</button>
+          <button class="btn btn-ghost" onclick="importSample()" disabled>📋 דוגמאות</button>
+          <button class="btn btn-ghost" onclick="clearAddresses()">🗑️ נקה הכל</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="form-group" style="flex:1.5">
+            <label>שם משפחה / נמען</label>
+            <input type="text" id="addr-name" placeholder="משפחת כהן">
+          </div>
+          <div class="form-group" style="flex:2">
+            <label>כתובת מלאה</label>
+            <input type="text" id="addr-street" placeholder="רחוב הנגב 5, שכונת נאות אשכול, באר שבע" onkeydown="if(event.key==='Enter')addAddress()">
+          </div>
+          <div class="form-group" style="flex:1;min-width:130px">
+            <label>טלפון</label>
+            <input type="text" id="addr-phone" placeholder="050-1234567">
+          </div>
+          <div class="form-group" style="width:90px;flex:none">
+            <label>חבילות</label>
+            <input type="number" id="addr-pkgs" value="1" min="1" max="5">
+          </div>
+          <button class="btn btn-primary" onclick="addAddress()" style="margin-bottom:1px">➕ הוסף</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2>📋 רשימת כתובות (<span id="addr-count">0</span>)</h2>
+        <div id="geocode-all-btn"></div>
+      </div>
+      <div id="addresses-table-wrap">
+        <div class="empty"><span class="emoji">📭</span>עדיין אין כתובות. הוסף כתובות למסירה.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB: VOLUNTEERS ===== -->
+  <div class="panel" id="panel-volunteers">
+    <div class="card">
+      <div class="card-header">
+        <h2>➕ הוסף מתנדב</h2>
+        <button class="btn btn-ghost" onclick="importSampleVols()" disabled>📋 טען דוגמאות</button>
+      </div>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="form-group" style="flex:1.5">
+            <label>שם המתנדב</label>
+            <input type="text" id="vol-name" placeholder="ישראל ישראלי" onkeydown="if(event.key==='Enter')addVolunteer()">
+          </div>
+          <div class="form-group" style="flex:1">
+            <label>טלפון (אופציונלי)</label>
+            <input type="text" id="vol-phone" placeholder="050-1234567">
+          </div>
+          <div class="form-group" style="width:110px;flex:none">
+            <label>מקסימום חבילות</label>
+            <input type="number" id="vol-max" value="5" min="1" max="20">
+          </div>
+          <button class="btn btn-primary" onclick="addVolunteer()" style="margin-bottom:1px">➕ הוסף</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2>👥 מתנדבים (<span id="vol-count">0</span>)</h2>
+        <span style="font-size:0.82rem;color:var(--text-muted)">קיבולת כוללת: <strong id="total-cap">0</strong> חבילות</span>
+      </div>
+      <div id="volunteers-table-wrap">
+        <div class="empty"><span class="emoji">🙋</span>עדיין אין מתנדבים. הוסף מתנדבים לרשימה.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB: DISTRIBUTE ===== -->
+  <div class="panel" id="panel-distribute">
+    <div class="stats-row" id="summary-stats" style="display:none">
+      <div class="stat-card"><div class="num" id="st-pkgs" dir="ltr">0</div><div class="lbl">סה"כ / נמסרו</div></div>
+      <div class="stat-card"><div class="num" id="st-vols">0</div><div class="lbl">מתנדבים</div></div>
+      <div class="stat-card"><div class="num" id="st-cap">0</div><div class="lbl">קיבולת כוללת</div></div>
+      <div class="stat-card"><div class="num" id="st-unassigned">0</div><div class="lbl">לא שובצו</div></div>
+    </div>
+
+    <div id="distribute-controls" style="text-align:center;margin-bottom:24px">
+      <button class="btn btn-primary btn-big" id="distribute-btn" onclick="runDistribution()">
+        🗺️ חלק חבילות לפי אזורים
+      </button>
+      <p style="font-size:0.82rem;color:var(--text-muted);margin-top:8px">האלגוריתם יקבץ כתובות קרובות ויחלק אותן למתנדבים לפי קיבולת</p>
+      <button class="btn btn-secondary" id="print-btn" onclick="window.print()" style="display:none;margin-top:12px">
+        🖨️ הדפס לפלאיירים
+      </button>
+    </div>
+
+    <div id="distribution-results"></div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===================== STATE =====================
+let addresses = [];
+let volunteers = [];
+let pickupLatLng = null;
+let currentAssignments = null; // {volId: [items]}
+let maps = {};
+let nextAddrId = 1;
+let nextVolId = 1;
+const COLORS = ['#C9302C','#2980B9','#27AE60','#8E44AD','#E67E22','#16A085','#D35400','#34495E','#E91E63','#00BCD4'];
+const BS_LAT = 31.252973, BS_LNG = 34.791462;
+
+// ===================== LOCALSTORAGE =====================
+function saveData() {
+  try {
+    localStorage.setItem('passover_addresses', JSON.stringify(addresses));
+    localStorage.setItem('passover_volunteers', JSON.stringify(volunteers));
+    localStorage.setItem('passover_pickup', JSON.stringify(pickupLatLng));
+    localStorage.setItem('passover_pickup_addr', document.getElementById('pickup-addr')?.value || '');
+    localStorage.setItem('passover_nextIds', JSON.stringify({a: nextAddrId, v: nextVolId}));
+    // Save assignments (always write, even null, to avoid stale data on reload)
+    if (currentAssignments) {
+      const ser = {};
+      Object.keys(currentAssignments).forEach(k => { ser[k] = currentAssignments[k]; });
+      localStorage.setItem('passover_assignments', JSON.stringify(ser));
+    } else {
+      localStorage.removeItem('passover_assignments');
+    }
+    const el = document.getElementById('save-indicator');
+    if (el) el.innerHTML = '<span class="save-dot"></span> נשמר ' + new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
+  } catch(e) {}
+}
+
+function loadData() {
+  try {
+    const a = localStorage.getItem('passover_addresses');
+    const v = localStorage.getItem('passover_volunteers');
+    const p = localStorage.getItem('passover_pickup');
+    const pa = localStorage.getItem('passover_pickup_addr');
+    const ids = localStorage.getItem('passover_nextIds');
+    const asgn = localStorage.getItem('passover_assignments');
+    if (a) addresses = JSON.parse(a);
+    if (v) volunteers = JSON.parse(v);
+    if (p) pickupLatLng = JSON.parse(p);
+    if (pa) { const el = document.getElementById('pickup-addr'); if(el) el.value = pa; }
+    if (ids) { const o=JSON.parse(ids); nextAddrId=o.a; nextVolId=o.v; }
+    if (asgn) {
+      const raw = JSON.parse(asgn);
+      currentAssignments = {};
+      Object.keys(raw).forEach(k => { currentAssignments[parseInt(k)] = raw[k]; });
+      // Hydrate eLat/eLng from address list (lost in JSON serialization)
+      hydrateAssignments();
+    }
+    if (addresses.length || volunteers.length) toast('נתונים נטענו מהשמירה המקומית 💾');
+  } catch(e) {}
+}
+
+function hydrateAssignments() {
+  if (!currentAssignments) return;
+  const addrMap = {};
+  addresses.forEach(a => { addrMap[a.id] = a; });
+  Object.keys(currentAssignments).forEach(k => {
+    currentAssignments[k] = currentAssignments[k].map(item => {
+      const src = addrMap[item.id] || item;
+      return {
+        ...item,
+        lat: src.lat ?? item.lat,
+        lng: src.lng ?? item.lng,
+        eLat: (src.geoStatus === 'ok' && src.lat) ? src.lat : BS_LAT,
+        eLng: (src.geoStatus === 'ok' && src.lng) ? src.lng : BS_LNG,
+        hasGeo: src.geoStatus === 'ok'
+      };
+    });
+  });
+}
+
+// ===================== TABS =====================
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i)=>{
+    t.classList.toggle('active', ['addresses','volunteers','distribute'][i]===name);
+  });
+  document.querySelectorAll('.panel').forEach(p=> p.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  if (name === 'distribute') renderDistributeReady();
+}
+
+// ===================== TOAST =====================
+function toast(msg, duration=2800) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(()=>t.classList.remove('show'), duration);
+}
+
+// ===================== GEOCODING =====================
+async function geocode(address) {
+  const q = encodeURIComponent(address + ', Israel');
+  const attempts = [
+    { url: `https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1&accept-language=he`, parse: d => Array.isArray(d) && d[0] ? {lat:parseFloat(d[0].lat),lng:parseFloat(d[0].lon)} : null },
+    { url: `https://photon.komoot.io/api/?q=${q}&limit=1&lang=he`, parse: d => d.features&&d.features[0] ? {lat:d.features[0].geometry.coordinates[1],lng:d.features[0].geometry.coordinates[0]} : null }
+  ];
+  for (const {url, parse} of attempts) {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) continue;
+      const data = await res.json();
+      const result = parse(data);
+      if (result) return result;
+    } catch(e) {}
+  }
+  return null;
+}
+
+async function geocodePickup() {
+  const addr = document.getElementById('pickup-addr').value.trim();
+  if (!addr) return;
+  const el = document.getElementById('pickup-status');
+  el.innerHTML = '<span class="spinner"></span>';
+  const res = await geocode(addr);
+  if (res) {
+    pickupLatLng = res;
+    el.innerHTML = '<span class="geo-status geo-ok">✓ מאומת</span>';
+    toast('נקודת האיסוף אומתה ✓');
+    saveData();
+  } else {
+    el.innerHTML = '<span class="geo-status geo-fail">✗ לא נמצא</span>';
+    toast('לא ניתן לאמת את הכתובת');
+  }
+}
+
+async function geocodeAll() {
+  const pending = addresses.filter(a => a.geoStatus !== 'ok');
+  if (pending.length === 0) { toast('כל הכתובות כבר מאומתות'); return; }
+  toast(`מאמת ${pending.length} כתובות...`, 8000);
+  for (const a of pending) {
+    a.geoStatus = 'loading';
+    renderAddressTable();
+    const res = await geocode(a.street + ', באר שבע');
+    if (res) { a.lat = res.lat; a.lng = res.lng; a.geoStatus = 'ok'; }
+    else { a.geoStatus = 'fail'; }
+    renderAddressTable();
+    await new Promise(r => setTimeout(r, 350));
+  }
+  saveData();
+  toast('אימות כתובות הושלם!');
+}
+
+// ===================== ADDRESSES =====================
+async function addAddress() {
+  const name = document.getElementById('addr-name').value.trim();
+  const street = document.getElementById('addr-street').value.trim();
+  const pkgs = parseInt(document.getElementById('addr-pkgs').value) || 1;
+  if (!street) { toast('יש להזין כתובת'); return; }
+  const phone = document.getElementById('addr-phone').value.trim();
+  const newAddr = { id: nextAddrId++, name: name || 'משפחה', street, phone, pkgs, lat: null, lng: null, geoStatus: 'loading' };
+  addresses.push(newAddr);
+  document.getElementById('addr-name').value = '';
+  document.getElementById('addr-street').value = '';
+  document.getElementById('addr-phone').value = '';
+  document.getElementById('addr-pkgs').value = 1;
+  renderAddressTable();
+  saveData();
+  toast(`כתובת נוספה: ${street}`);
+  const res = await geocode(street);
+  if (res) { newAddr.lat = res.lat; newAddr.lng = res.lng; newAddr.geoStatus = 'ok'; }
+  else { newAddr.geoStatus = 'fail'; }
+  renderAddressTable();
+  saveData();
+}
+
+function removeAddress(id) {
+  addresses = addresses.filter(a => a.id !== id);
+  renderAddressTable();
+  saveData();
+}
+
+function clearAddresses() {
+  if (addresses.length === 0) { toast('אין כתובות למחיקה'); return; }
+  addresses = [];
+  currentAssignments = null;
+  document.getElementById('distribution-results').innerHTML = '';
+  document.getElementById('summary-stats').style.display = 'none';
+  renderAddressTable();
+  saveData();
+  toast('כל הכתובות נמחקו 🗑️');
+}
+
+function renderAddressTable() {
+  document.getElementById('addr-count').textContent = addresses.length;
+  const wrap = document.getElementById('addresses-table-wrap');
+  if (addresses.length === 0) {
+    wrap.innerHTML = '<div class="empty"><span class="emoji">📭</span>עדיין אין כתובות.</div>';
+    return;
+  }
+  let html = `<table><thead><tr>
+    <th>#</th><th>שם</th><th>טלפון</th><th>כתובת</th><th>חבילות</th><th>מיקום</th><th></th>
+  </tr></thead><tbody>`;
+  addresses.forEach((a, i) => {
+    const geoHtml = a.geoStatus === 'ok' ? '<span class="geo-status geo-ok">✓</span>'
+      : a.geoStatus === 'loading' ? '<span class="spinner"></span>'
+      : a.geoStatus === 'fail' ? '<span class="geo-status geo-fail">✗</span>'
+      : '<span class="geo-status geo-pending">?</span>';
+    const deliveredStyle = a.delivered ? 'opacity:0.5;text-decoration:line-through;' : '';
+    const deliveredBadge = a.delivered ? '<span class="geo-status geo-ok" style="font-size:0.75rem">✓ נמסר</span>' : '';
+    html += `<tr style="${deliveredStyle}">
+      <td>${i+1}</td>
+      <td><strong>${escHtml(a.name)}</strong> ${deliveredBadge}</td>
+      <td>${a.phone ? `<a href="tel:${escHtml(a.phone)}" style="color:var(--brown);text-decoration:none">${escHtml(a.phone)}</a>` : '<span style="color:var(--text-muted)">-</span>'}</td>
+      <td>${escHtml(a.street)}</td>
+      <td style="text-align:center">${a.pkgs}</td>
+      <td>${geoHtml}</td>
+      <td style="display:flex;gap:5px;align-items:center">
+        <button class="btn btn-ghost" style="padding:5px 10px;font-size:0.8rem" onclick="openEditAddress(${a.id})" title="ערוך">✏️</button>
+        <button class="btn btn-danger" onclick="removeAddress(${a.id})">✕</button>
+      </td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+}
+
+// ===================== VOLUNTEERS =====================
+function addVolunteer() {
+  const name = document.getElementById('vol-name').value.trim();
+  const phone = document.getElementById('vol-phone').value.trim();
+  const max = parseInt(document.getElementById('vol-max').value) || 5;
+  if (!name) { toast('יש להזין שם מתנדב'); return; }
+  volunteers.push({ id: nextVolId++, name, phone, max });
+  document.getElementById('vol-name').value = '';
+  document.getElementById('vol-phone').value = '';
+  document.getElementById('vol-max').value = 5;
+  renderVolTable();
+  saveData();
+  toast(`מתנדב נוסף: ${name}`);
+}
+
+function removeVolunteer(id) {
+  volunteers = volunteers.filter(v => v.id !== id);
+  renderVolTable();
+  saveData();
+}
+
+function renderVolTable() {
+  document.getElementById('vol-count').textContent = volunteers.length;
+  const totalCap = volunteers.reduce((s,v)=>s+v.max,0);
+  document.getElementById('total-cap').textContent = totalCap;
+  const wrap = document.getElementById('volunteers-table-wrap');
+  if (volunteers.length === 0) {
+    wrap.innerHTML = '<div class="empty"><span class="emoji">🙋</span>עדיין אין מתנדבים.</div>';
+    return;
+  }
+  let html = `<table><thead><tr><th>#</th><th>שם</th><th>טלפון</th><th>מקסימום חבילות</th><th></th></tr></thead><tbody>`;
+  volunteers.forEach((v,i)=>{
+    html += `<tr>
+      <td>${i+1}</td>
+      <td><strong>${escHtml(v.name)}</strong></td>
+      <td>${escHtml(v.phone||'-')}</td>
+      <td style="text-align:center"><span class="pkg-badge">${v.max}</span></td>
+      <td style="display:flex;gap:5px;align-items:center">
+        <button class="btn btn-ghost" style="padding:5px 10px;font-size:0.8rem" onclick="openEditVolunteer(${v.id})" title="ערוך">✏️</button>
+        <button class="btn btn-danger" onclick="removeVolunteer(${v.id})">✕</button>
+      </td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+}
+
+// ===================== DISTANCE HELPERS =====================
+function distLL(lat1,lng1,lat2,lng2) {
+  const R=6371, dLat=(lat2-lat1)*Math.PI/180, dLon=(lng2-lng1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+// Total route length for a list of items, optionally starting from a point
+function routeLength(items, start) {
+  if (items.length === 0) return 0;
+  let total = 0;
+  const geoItems = items.filter(i => i.hasGeo || i.geoStatus === 'ok');
+  if (geoItems.length === 0) return 0;
+  let prev = start || { eLat: geoItems[0].eLat, eLng: geoItems[0].eLng };
+  for (const it of geoItems) {
+    total += distLL(prev.eLat || prev.lat, prev.eLng || prev.lng, it.eLat, it.eLng);
+    prev = it;
+  }
+  return total;
+}
+
+// ===================== GREEDY TSP =====================
+function greedyTSP(points, startLatLng) {
+  const unvisited = [...points];
+  const route = [];
+  let cur = startLatLng ? { eLat: startLatLng.lat, eLng: startLatLng.lng }
+                        : (unvisited[0] || null);
+  while (unvisited.length > 0) {
+    let best = null, bestD = Infinity, bestIdx = -1;
+    unvisited.forEach((p,i) => {
+      if (!p.eLat) return;
+      const d = distLL(cur.eLat||cur.lat, cur.eLng||cur.lng, p.eLat, p.eLng);
+      if (d < bestD) { bestD = d; best = p; bestIdx = i; }
+    });
+    if (best) { route.push(best); cur = best; unvisited.splice(bestIdx,1); }
+    else { route.push(...unvisited); break; }
+  }
+  return route;
+}
+
+// ===================== DISTRIBUTION ALGORITHM =====================
+function runDistribution() {
+  if (addresses.length === 0) { toast('אין כתובות להפצה'); return; }
+  if (volunteers.length === 0) { toast('אין מתנדבים'); return; }
+
+  const totalPkgs = addresses.reduce((s,a)=>s+a.pkgs, 0);
+  const items = addresses.map(a=>({
+    ...a,
+    eLat: (a.geoStatus==='ok' && a.lat) ? a.lat : BS_LAT,
+    eLng: (a.geoStatus==='ok' && a.lng) ? a.lng : BS_LNG,
+    hasGeo: a.geoStatus==='ok'
+  }));
+
+  const vols = [...volunteers].sort((a,b)=>b.max-a.max);
+  const startPt = pickupLatLng || { lat: BS_LAT, lng: BS_LNG };
+
+  // Step 1: geographic cluster assignment
+  let assignments = geographicClusterAssign(items, vols);
+
+  // Step 2: 2-opt swap improvement between volunteers
+  assignments = interVolunteerSwap(assignments, vols, startPt);
+
+  // Step 3: TSP sort each volunteer's route
+  vols.forEach(v => {
+    assignments[v.id] = greedyTSP(assignments[v.id], startPt);
+  });
+
+  currentAssignments = assignments;
+  renderDistribution(assignments, vols, totalPkgs);
+}
+
+// ─── Step 1: k-means++ cluster assign ────────────────────────────────────
+function geographicClusterAssign(items, vols) {
+  const K = vols.length;
+  const result = {};
+  vols.forEach(v => { result[v.id] = []; });
+  if (K === 0 || items.length === 0) return result;
+
+  const pool = items.filter(i=>i.hasGeo).length >= K ? items.filter(i=>i.hasGeo) : items;
+
+  // k-means++ seed selection
+  let centers = [];
+  let first = pool.reduce((b,p) => {
+    const d = distLL(p.eLat, p.eLng, BS_LAT, BS_LNG);
+    return d > b.d ? {p,d} : b;
+  }, {p:pool[0], d:-1});
+  centers.push({lat:first.p.eLat, lng:first.p.eLng});
+  while (centers.length < K) {
+    const weights = pool.map(p => {
+      const d = Math.min(...centers.map(c=>distLL(p.eLat,p.eLng,c.lat,c.lng)));
+      return d*d;
+    });
+    const total = weights.reduce((s,w)=>s+w,0);
+    let r = Math.random()*total, cum = 0, chosen = pool[pool.length-1];
+    for (let i=0;i<pool.length;i++) { cum+=weights[i]; if(cum>=r){chosen=pool[i];break;} }
+    centers.push({lat:chosen.eLat, lng:chosen.eLng});
+  }
+
+  // k-means convergence (20 iterations)
+  for (let iter=0; iter<20; iter++) {
+    const buckets = centers.map(()=>[]);
+    items.forEach(item => {
+      let best=0, bestD=Infinity;
+      centers.forEach((c,ci)=>{
+        const d=distLL(item.eLat,item.eLng,c.lat,c.lng);
+        if(d<bestD){bestD=d;best=ci;}
+      });
+      buckets[best].push(item);
+    });
+    let moved=false;
+    centers = centers.map((c,ci)=>{
+      if(buckets[ci].length===0) return c;
+      const nLat=buckets[ci].reduce((s,i)=>s+i.eLat,0)/buckets[ci].length;
+      const nLng=buckets[ci].reduce((s,i)=>s+i.eLng,0)/buckets[ci].length;
+      if(Math.abs(nLat-c.lat)>0.00001||Math.abs(nLng-c.lng)>0.00001) moved=true;
+      return {lat:nLat,lng:nLng};
+    });
+    if(!moved) break;
+  }
+
+  // Capacity-aware assignment: assign each item to nearest center with room
+  // Process items sorted by: distance to nearest center (closest contested first)
+  const capLeft = {};
+  vols.forEach(v=>{ capLeft[v.id]=v.max; });
+
+  // For each item, compute distance to each center, pick nearest with capacity
+  // Sort items by "contention" = difference between 1st and 2nd nearest center
+  // (low contention = item is clearly in one zone, assign it first)
+  const scored = items.map(item => {
+    const dists = centers.map((c,ci)=>({ci, d:distLL(item.eLat,item.eLng,c.lat,c.lng)}))
+                         .sort((a,b)=>a.d-b.d);
+    return { item, nearest: dists[0].ci, d1: dists[0].d, d2: dists[1]?.d ?? Infinity };
+  });
+  // Sort: items with clearest zone membership first (biggest spread between 1st and 2nd)
+  scored.sort((a,b) => (b.d2-b.d1) - (a.d2-a.d1));
+
+  const overflow = [];
+  scored.forEach(({item, nearest}) => {
+    const vol = vols[nearest];
+    if (capLeft[vol.id] >= item.pkgs) {
+      result[vol.id].push(item);
+      capLeft[vol.id] -= item.pkgs;
+    } else {
+      // Try to find another volunteer whose existing items are closest
+      let bestVol = null, bestD = Infinity;
+      vols.forEach(v => {
+        if (capLeft[v.id] < item.pkgs) return;
+        const vi = vols.indexOf(v);
+        // Distance = min(distance to existing items, distance to center)
+        const existing = result[v.id];
+        const d = existing.length > 0
+          ? Math.min(...existing.map(a=>distLL(item.eLat,item.eLng,a.eLat,a.eLng)))
+          : distLL(item.eLat,item.eLng,centers[vi].lat,centers[vi].lng);
+        if (d < bestD) { bestD = d; bestVol = v; }
+      });
+      if (bestVol) {
+        result[bestVol.id].push(item);
+        capLeft[bestVol.id] -= item.pkgs;
+      } else {
+        overflow.push(item);
+      }
+    }
+  });
+
+  // Last resort: assign overflow to any remaining capacity
+  overflow.forEach(item => {
+    let bestVol = null, bestD = Infinity;
+    vols.forEach((v,vi) => {
+      if (capLeft[v.id] <= 0) return;
+      const d = distLL(item.eLat, item.eLng, centers[vi].lat, centers[vi].lng);
+      if (d < bestD) { bestD = d; bestVol = v; }
+    });
+    if (bestVol) {
+      result[bestVol.id].push(item);
+      capLeft[bestVol.id] -= item.pkgs;
+    }
+  });
+
+  return result;
+}
+
+// ─── Step 2: inter-volunteer swap improvement ────────────────────────────
+// Try swapping single items between volunteer pairs. Accept if total route
+// distance decreases. Repeat until no improvement found.
+function interVolunteerSwap(assignments, vols, startPt) {
+  let improved = true;
+  let iterations = 0;
+  while (improved && iterations < 30) {
+    improved = false;
+    iterations++;
+    for (let i=0; i<vols.length; i++) {
+      for (let j=i+1; j<vols.length; j++) {
+        const vi = vols[i], vj = vols[j];
+        const itemsI = assignments[vi.id];
+        const itemsJ = assignments[vj.id];
+        if (itemsI.length === 0 || itemsJ.length === 0) continue;
+
+        const baseLen = routeLength(itemsI, startPt) + routeLength(itemsJ, startPt);
+
+        // Try moving each item from I to J and vice versa
+        for (let a=0; a<itemsI.length; a++) {
+          const item = itemsI[a];
+          // Check capacity: moving item from I to J
+          const capUsedJ = itemsJ.reduce((s,x)=>s+x.pkgs,0);
+          if (capUsedJ + item.pkgs <= vj.max) {
+            const newI = itemsI.filter((_,idx)=>idx!==a);
+            const newJ = [...itemsJ, item];
+            const newLen = routeLength(newI, startPt) + routeLength(newJ, startPt);
+            if (newLen < baseLen - 0.01) {
+              assignments[vi.id] = newI;
+              assignments[vj.id] = newJ;
+              improved = true;
+              break;
+            }
+          }
+        }
+        if (improved) break;
+
+        // Try moving each item from J to I
+        for (let b=0; b<itemsJ.length; b++) {
+          const item = itemsJ[b];
+          const capUsedI = itemsI.reduce((s,x)=>s+x.pkgs,0);
+          if (capUsedI + item.pkgs <= vi.max) {
+            const newJ = itemsJ.filter((_,idx)=>idx!==b);
+            const newI = [...itemsI, item];
+            const newLen = routeLength(newI, startPt) + routeLength(newJ, startPt);
+            if (newLen < baseLen - 0.01) {
+              assignments[vj.id] = newJ;
+              assignments[vi.id] = newI;
+              improved = true;
+              break;
+            }
+          }
+        }
+        if (improved) break;
+      }
+      if (improved) break;
+    }
+  }
+  return assignments;
+}
+
+// ===================== MANUAL TRANSFER =====================
+let transferState = null; // { addrId, fromVolId }
+
+function openTransferModal(addrId, fromVolId) {
+  transferState = { addrId, fromVolId };
+  const item = addresses.find(a=>a.id===addrId);
+  if (!item) return;
+
+  const fromVol = volunteers.find(v=>v.id===fromVolId);
+  const capLeft = {};
+  volunteers.forEach(v=>{
+    capLeft[v.id] = v.max - (currentAssignments[v.id]||[]).reduce((s,i)=>s+i.pkgs,0);
+  });
+
+  let optionsHtml = volunteers
+    .filter(v=>v.id!==fromVolId)
+    .map(v=>{
+      const cap = capLeft[v.id];
+      const disabled = cap < item.pkgs ? 'disabled' : '';
+      return `<option value="${v.id}" ${disabled}>${escHtml(v.name)} (פנוי: ${cap})${cap<item.pkgs?' – מלא':''}</option>`;
+    }).join('');
+
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="transfer-modal-overlay" id="transfer-overlay" onclick="if(event.target===this)closeTransferModal()">
+      <div class="transfer-modal">
+        <h3>🔄 העבר חבילה</h3>
+        <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:14px">
+          <strong>${escHtml(item.name)}</strong> – ${escHtml(item.street)}<br>
+          ממתנדב: <strong>${escHtml(fromVol?.name||'')}</strong>
+        </p>
+        <label>העבר אל מתנדב:</label>
+        <select id="transfer-target">${optionsHtml}</select>
+        <div class="btn-row">
+          <button class="btn btn-ghost" onclick="closeTransferModal()">ביטול</button>
+          <button class="btn btn-primary" onclick="confirmTransfer()">✓ העבר</button>
+        </div>
+      </div>
+    </div>`);
+}
+
+function closeTransferModal() {
+  const el = document.getElementById('transfer-overlay');
+  if (el) el.remove();
+  transferState = null;
+}
+
+function confirmTransfer() {
+  if (!transferState) return;
+  const { addrId, fromVolId } = transferState;
+  const toVolId = parseInt(document.getElementById('transfer-target').value);
+  if (!toVolId || toVolId === fromVolId) { closeTransferModal(); return; }
+
+  // Move item
+  const item = (currentAssignments[fromVolId]||[]).find(i=>i.id===addrId);
+  if (!item) { closeTransferModal(); return; }
+  currentAssignments[fromVolId] = currentAssignments[fromVolId].filter(i=>i.id!==addrId);
+  if (!currentAssignments[toVolId]) currentAssignments[toVolId] = [];
+  currentAssignments[toVolId].push(item);
+
+  // Re-TSP sort both volunteers
+  const startPt = pickupLatLng || {lat:BS_LAT, lng:BS_LNG};
+  currentAssignments[fromVolId] = greedyTSP(currentAssignments[fromVolId], startPt);
+  currentAssignments[toVolId]   = greedyTSP(currentAssignments[toVolId], startPt);
+
+  closeTransferModal();
+  const totalPkgs = addresses.reduce((s,a)=>s+a.pkgs,0);
+  renderDistribution(currentAssignments, [...volunteers].sort((a,b)=>b.max-a.max), totalPkgs);
+  toast('✓ החבילה הועברה');
+}
+
+// ===================== COPY ASSIGNMENT =====================
+function copyAssignmentCard(volId) {
+  const v = volunteers.find(x => x.id === volId);
+  const items = (currentAssignments || {})[volId] || [];
+  if (!v) return;
+
+  const numEmojis = ['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣','🔟'];
+  const pkgCount = items.reduce((s, it) => s + it.pkgs, 0);
+
+  const lines = [];
+  lines.push(`🙋 ${v.name}${v.phone ? ' | 📱 ' + v.phone : ''}`);
+  lines.push(`📦 ${pkgCount} / ${v.max} חבילות`);
+
+  items.forEach((it, idx) => {
+    const num = idx < numEmojis.length ? numEmojis[idx] : `${idx + 1}.`;
+    lines.push('');
+    lines.push(`${num} ${it.name}`);
+    lines.push(`   📍 ${it.street}${it.pkgs > 1 ? ` (${it.pkgs} חבילות)` : ''}`);
+    if (it.phone) lines.push(`   📞 ${it.phone}`);
+  });
+
+  navigator.clipboard.writeText(lines.join('\n')).then(() => {
+    const btn = document.getElementById(`copy-btn-${volId}`);
+    if (!btn) return;
+    btn.textContent = '✓ הועתק!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 העתק'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// ===================== RENDER DISTRIBUTION =====================
+function renderDistribution(assignments, vols, totalPkgs) {
+  const assignedPkgs = vols.reduce((s,v)=>s+( assignments[v.id]||[]).reduce((ss,it)=>ss+it.pkgs,0),0);
+  const unassigned = totalPkgs - assignedPkgs;
+
+  const deliveredPkgs = addresses.filter(a => a.delivered).reduce((s,a) => s + a.pkgs, 0);
+  document.getElementById('summary-stats').style.display = '';
+  document.getElementById('st-pkgs').textContent = deliveredPkgs + ' / ' + totalPkgs;
+  document.getElementById('st-vols').textContent = vols.length;
+  document.getElementById('st-cap').textContent = vols.reduce((s,v)=>s+v.max,0);
+  document.getElementById('st-unassigned').textContent = unassigned;
+
+  // Destroy old maps
+  Object.values(maps).forEach(m=>{ try{m.remove();}catch(e){} });
+  maps = {};
+
+  let html = '';
+  vols.forEach((v, vi) => {
+    const items = assignments[v.id] || [];
+    const pkgCount = items.reduce((s,it)=>s+it.pkgs, 0);
+    const color = COLORS[vi % COLORS.length];
+    const mapId = `map-${v.id}`;
+
+    html += `<div class="assignment-card${items.length === 0 ? ' no-pkgs' : ''}">
+      <div class="assignment-header">
+        <div class="vol-name" style="color:${color}">
+          <span>🙋</span> ${escHtml(v.name)}
+          ${v.phone ? `<span style="font-size:0.8rem;color:#aaa;font-weight:400">${escHtml(v.phone)}</span>` : ''}
+        </div>
+        <span class="pkg-badge" style="background:${color}">${pkgCount} / ${v.max} חבילות</span>
+        <button class="copy-btn" id="copy-btn-${v.id}" onclick="copyAssignmentCard(${v.id})">📋 העתק</button>
+      </div>
+      <div class="assignment-body">
+        <ul class="delivery-list">`;
+
+    if (items.length === 0) {
+      html += `<li style="color:var(--text-muted)">לא שובצו חבילות למתנדב זה</li>`;
+    } else {
+      items.forEach((it, idx) => {
+        const delivered = addresses.find(a=>a.id===it.id)?.delivered;
+        const liStyle = delivered ? 'opacity:0.5;' : '';
+        const checkIcon = delivered ? '✅' : '☐';
+        html += `<li style="${liStyle}">
+          <div class="delivery-num" style="background:${color};${delivered?'background:#aaa!important;':''}">${idx+1}</div>
+          <div class="delivery-info">
+            <div class="delivery-name">${escHtml(it.name)}${delivered?` <span style="font-size:0.78rem;color:var(--green);font-weight:700">✓ נמסר</span>`:''}</div>
+            <div class="delivery-addr">📍 ${escHtml(it.street)}${it.pkgs>1?` (${it.pkgs} חבילות)`:''}</div>
+            ${it.phone ? `<div class="delivery-addr" style="color:var(--brown)">📞 <a href="tel:${escHtml(it.phone)}" style="color:var(--brown)">${escHtml(it.phone)}</a></div>` : ''}
+          </div>
+          <button class="transfer-btn" onclick="toggleDelivered(${it.id})" title="${delivered?'בטל סימון':'סמן כנמסר'}" style="font-size:1.1rem;padding:2px 6px">${checkIcon}</button>
+          <button class="transfer-btn" onclick="openTransferModal(${it.id},${v.id})" title="העבר למתנדב אחר">🔄 העבר</button>
+          ${it.geoStatus!=='ok'?'<span class="geo-status geo-pending">ללא GPS</span>':''}
+        </li>`;
+      });
+    }
+    html += `</ul>`;
+
+    const hasGeo = items.some(it=>it.geoStatus==='ok');
+    if (hasGeo || pickupLatLng) {
+      html += `<div class="map-container" id="${mapId}"></div>
+      <div class="map-legend">
+        ${pickupLatLng ? '<div class="legend-item"><div class="legend-dot" style="background:#C9922A"></div> נקודת איסוף</div>' : ''}
+        <div class="legend-item"><div class="legend-dot" style="background:'+color+'"></div> כתובות מסירה</div>
+      </div>`;
+    }
+    html += `</div></div>`;
+  });
+
+  if (unassigned > 0) {
+    html += `<div class="card" style="border-color:var(--red)">
+      <div class="card-header" style="background:#fff0ee">
+        <h2 style="color:var(--red)">⚠️ חבילות שלא שובצו (${unassigned})</h2>
+      </div>
+      <div class="card-body" style="color:var(--text-muted);font-size:0.9rem">
+        קיבולת המתנדבים אינה מספיקה. הוסף מתנדבים או הגדל קיבולת.
+      </div>
+    </div>`;
+  }
+
+  document.getElementById('distribution-results').innerHTML = html;
+
+  setTimeout(()=>{
+    vols.forEach((v, vi) => {
+      const items = assignments[v.id] || [];
+      const hasGeo = items.some(it=>it.geoStatus==='ok');
+      if (!hasGeo && !pickupLatLng) return;
+      const mapId = `map-${v.id}`;
+      const el = document.getElementById(mapId);
+      if (!el) return;
+      const color = COLORS[vi % COLORS.length];
+
+      const map = L.map(mapId, { zoomControl: true });
+      maps[mapId] = map;
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OSM', maxZoom: 18
+      }).addTo(map);
+
+      const points = [];
+      if (pickupLatLng) {
+        const icon = L.divIcon({
+          html:`<div style="width:28px;height:28px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.3)">🏠</div>`,
+          className:'', iconAnchor:[14,14]
+        });
+        L.marker([pickupLatLng.lat, pickupLatLng.lng],{icon}).addTo(map).bindPopup('<b>נקודת איסוף</b>');
+        points.push([pickupLatLng.lat, pickupLatLng.lng]);
+      }
+
+      const usedCoords = {};
+      const routePoints = pickupLatLng ? [[pickupLatLng.lat, pickupLatLng.lng]] : [];
+      items.forEach((it, idx) => {
+        if (!it.lat) return;
+        const key = it.lat.toFixed(5)+','+it.lng.toFixed(5);
+        const jc = usedCoords[key]||0; usedCoords[key]=jc+1;
+        const jLat=it.lat+jc*0.00008, jLng=it.lng+jc*0.00008;
+        const icon = L.divIcon({
+          html:`<div style="width:26px;height:26px;background:${color};border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.25)">${idx+1}</div>`,
+          className:'', iconAnchor:[13,13]
+        });
+        L.marker([jLat,jLng],{icon}).addTo(map).bindPopup(`<b>${escHtml(it.name)}</b><br>${escHtml(it.street)}`);
+        points.push([jLat,jLng]);
+        routePoints.push([jLat,jLng]);
+      });
+
+      if (routePoints.length>1) L.polyline(routePoints,{color,weight:3,opacity:0.7,dashArray:'6,4'}).addTo(map);
+      if (points.length>0) map.fitBounds(L.latLngBounds(points).pad(0.18));
+    });
+  }, 100);
+
+  document.getElementById('print-btn').style.display = '';
+  toast('החלוקה הושלמה! 🎉');
+}
+
+function renderDistributeReady() {
+  const btn = document.getElementById('distribute-btn');
+  btn.disabled = addresses.length===0 || volunteers.length===0;
+}
+
+// ===================== SAMPLE DATA =====================
+function importSample() {
+  const samples = [
+    { name: 'משפחת כהן', street: 'שדרות רגר 45, באר שבע', phone: '050-1111111' },
+    { name: 'משפחת לוי', street: 'רחוב הנגב 12, שכונת נאות אשכול, באר שבע' },
+    { name: 'משפחת ישראלי', street: 'רחוב קק"ל 5, שכונת ד, באר שבע' },
+    { name: 'משפחת אברהם', street: 'שדרות בן גוריון 101, באר שבע' },
+    { name: 'משפחת גולן', street: 'רחוב הצנחנים 3, שכונת ט, באר שבע' },
+    { name: 'משפחת פרץ', street: 'רחוב מוריה 28, שכונת נאות לון, באר שבע' },
+    { name: 'משפחת דוד', street: 'רחוב הבנים 7, שכונת רמות, באר שבע' },
+    { name: 'משפחת שמעון', street: 'שדרות אשכול 55, באר שבע' },
+    { name: 'משפחת מזרחי', street: 'רחוב עמל 4, שכונת גבעת הברושים, באר שבע' },
+    { name: 'משפחת עמר', street: 'רחוב הרצל 20, שכונת א, באר שבע' },
+    { name: 'משפחת ביטון', street: 'רחוב דגניה 8, שכונת ב, באר שבע' },
+    { name: 'משפחת אזולאי', street: 'רחוב האורן 15, שכונת ג, באר שבע' },
+    { name: 'משפחת חדד', street: 'שדרות יצחק רגר 80, באר שבע' },
+    { name: 'משפחת סבג', street: 'רחוב העמק 6, שכונת ה, באר שבע' },
+    { name: 'משפחת שפירא', street: 'רחוב ויצמן 33, באר שבע' },
+  ];
+  samples.forEach(s => {
+    addresses.push({ id: nextAddrId++, name: s.name, street: s.street, pkgs: 1, lat: null, lng: null, geoStatus: 'pending' });
+  });
+  renderAddressTable();
+  saveData();
+  toast('נטענו 15 כתובות לדוגמה');
+}
+
+function importSampleVols() {
+  const samples = [
+    { name: 'דוד כהן', phone: '050-1111111', max: 5 },
+    { name: 'שרה לוי', phone: '052-2222222', max: 4 },
+    { name: 'אמיר ישראלי', phone: '054-3333333', max: 6 },
+    { name: 'רחל גולן', phone: '058-4444444', max: 4 },
+    { name: 'יוסי פרץ', phone: '050-5555555', max: 5 },
+  ];
+  samples.forEach(s => {
+    volunteers.push({ id: nextVolId++, ...s });
+  });
+  renderVolTable();
+  saveData();
+  toast('נטענו 5 מתנדבים לדוגמה');
+}
+
+// ===================== EXPORT / IMPORT JSON =====================
+function exportData() {
+  const payload = {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    pickupAddr: document.getElementById('pickup-addr')?.value || '',
+    pickupLatLng,
+    addresses,
+    volunteers,
+    nextAddrId,
+    nextVolId,
+    assignments: currentAssignments || null
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const d = new Date();
+  a.download = `חלוקת-פסח-${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('הנתונים יוצאו לקובץ JSON ✓');
+}
+
+function importDataFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.addresses || !data.volunteers) throw new Error('פורמט לא תקין');
+      addresses = data.addresses || [];
+      volunteers = data.volunteers || [];
+      pickupLatLng = data.pickupLatLng || null;
+      nextAddrId = data.nextAddrId || (addresses.length + 1);
+      nextVolId = data.nextVolId || (volunteers.length + 1);
+      if (data.pickupAddr) {
+        const el = document.getElementById('pickup-addr');
+        if (el) el.value = data.pickupAddr;
+      }
+      if (data.assignments) {
+        currentAssignments = {};
+        Object.keys(data.assignments).forEach(k => {
+          currentAssignments[parseInt(k)] = data.assignments[k];
+        });
+      } else {
+        currentAssignments = null;
+      }
+      // Restore pickup status
+      const statusEl = document.getElementById('pickup-status');
+      if (statusEl) statusEl.innerHTML = pickupLatLng
+        ? '<span class="geo-status geo-ok">✓ מאומת</span>' : '';
+      renderAddressTable();
+      renderVolTable();
+      // (hydration now handled in loadData)
+      saveData();
+      toast(`✓ יובאו ${addresses.length} כתובות ו-${volunteers.length} מתנדבים`);
+    } catch(err) {
+      toast('שגיאה בקובץ: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = ''; // allow re-import of same file
+}
+
+// ===================== IMPORT FROM TEXT =====================
+function openImportText() {
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="transfer-modal-overlay" id="import-text-overlay" onclick="if(event.target===this)closeImportText()">
+      <div class="import-modal">
+        <h3>📥 ייבוא כתובות מטקסט</h3>
+        <div class="import-hint">
+          <strong>פורמט: שורה לכל כתובת (מפריד: |)</strong>
+          שם | כתובת | חבילות<br>
+          שם | טלפון | כתובת | חבילות<br>
+          <br>
+          משפחת כהן | רחוב הרצל 5, באר שבע | 1<br>
+          משפחת לוי | 050-1234567 | שדרות רגר 22, באר שבע | 2<br>
+          ישראל ישראלי | רחוב הנגב 10, שכונת ד
+        </div>
+        <textarea class="import-textarea" id="import-text-area"
+          placeholder="הדבק כאן את הרשימה..."
+          oninput="previewImportText()"></textarea>
+        <div class="import-preview" id="import-preview"></div>
+        <div class="btn-row" style="display:flex;gap:9px;justify-content:space-between;align-items:center">
+          <label style="display:flex;align-items:center;gap:7px;font-size:0.85rem;cursor:pointer">
+            <input type="checkbox" id="import-append" checked>
+            <span style="color:var(--text-muted)">הוסף לרשימה קיימת</span>
+          </label>
+          <div style="display:flex;gap:9px">
+            <button class="btn btn-ghost" onclick="closeImportText()">ביטול</button>
+            <button class="btn btn-primary" id="import-text-btn" onclick="confirmImportText()">✓ ייבא</button>
+          </div>
+        </div>
+      </div>
+    </div>`);
+}
+
+function closeImportText() { document.getElementById('import-text-overlay')?.remove(); }
+
+function parseImportLines(text) {
+  const lines = text.split('\n').map(l=>l.trim()).filter(l=>l.length>0 && !l.startsWith('#'));
+  const parsed = [], errors = [];
+  lines.forEach((line, i) => {
+    // Support | or TAB or double-space as separator
+    let parts;
+    if (line.includes('|')) parts = line.split('|').map(p=>p.trim());
+    else if (line.includes('\t')) parts = line.split('\t').map(p=>p.trim());
+    else parts = [line.trim()]; // just an address with no name
+
+    if (parts.length === 1) {
+      // Only address
+      parsed.push({ name: 'משפחה', street: parts[0], pkgs: 1 });
+    } else if (parts.length >= 2) {
+      const name = parts[0] || 'משפחה';
+      const street = parts[1];
+      const pkgs = parseInt(parts[2]) || 1;
+      if (!street) { errors.push(`שורה ${i+1}: כתובת חסרה`); return; }
+      parsed.push({ name, street, pkgs: Math.min(Math.max(pkgs,1),10) });
+    }
+  });
+  return { parsed, errors };
+}
+
+function previewImportText() {
+  const text = document.getElementById('import-text-area')?.value || '';
+  const preview = document.getElementById('import-preview');
+  const btn = document.getElementById('import-text-btn');
+  if (!text.trim()) { preview.innerHTML = ''; return; }
+  const { parsed, errors } = parseImportLines(text);
+  let html = '';
+  if (parsed.length > 0) html += `<span class="ok">✓ ${parsed.length} כתובות זוהו</span>`;
+  if (errors.length > 0) html += (html?' &nbsp;':'') + `<span class="warn">⚠ ${errors.length} שגיאות</span>`;
+  preview.innerHTML = html;
+  if (btn) btn.disabled = parsed.length === 0;
+}
+
+async function confirmImportText() {
+  const text = document.getElementById('import-text-area')?.value || '';
+  const append = document.getElementById('import-append')?.checked;
+  const { parsed, errors } = parseImportLines(text);
+  if (parsed.length === 0) { toast('לא זוהו כתובות תקינות'); return; }
+  if (!append) addresses = [];
+  const newAddresses = [];
+  parsed.forEach(p => {
+    const addr = { id: nextAddrId++, name: p.name, street: p.street, phone: p.phone||'', pkgs: p.pkgs,
+      lat: null, lng: null, geoStatus: 'loading' };
+    addresses.push(addr);
+    newAddresses.push(addr);
+  });
+  closeImportText();
+  renderAddressTable();
+  saveData();
+  const msg = errors.length > 0
+    ? `יובאו ${parsed.length} כתובות (${errors.length} שגיאות הושמטו) – מאמת...`
+    : `✓ יובאו ${parsed.length} כתובות – מאמת...`;
+  toast(msg, 8000);
+  for (const a of newAddresses) {
+    const res = await geocode(a.street);
+    if (res) { a.lat = res.lat; a.lng = res.lng; a.geoStatus = 'ok'; }
+    else { a.geoStatus = 'fail'; }
+    renderAddressTable();
+    await new Promise(r => setTimeout(r, 350));
+  }
+  saveData();
+  const okCount = newAddresses.filter(a => a.geoStatus === 'ok').length;
+  const failCount = newAddresses.filter(a => a.geoStatus === 'fail').length;
+  toast(`אימות הושלם: ${okCount} ✓${failCount ? ', ' + failCount + ' ✗' : ''}`);
+}
+
+// ===================== EXPORT / IMPORT JSON =====================
+function exportData() {
+  const payload = {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    pickupAddr: document.getElementById('pickup-addr')?.value || '',
+    pickupLatLng,
+    addresses,
+    volunteers,
+    nextAddrId,
+    nextVolId,
+    assignments: currentAssignments || null
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const d = new Date();
+  a.download = 'חלוקת-פסח-' + d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0') + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('הנתונים יוצאו לקובץ JSON ✓');
+}
+
+function importDataFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.addresses || !data.volunteers) throw new Error('פורמט לא תקין');
+      addresses = data.addresses || [];
+      volunteers = data.volunteers || [];
+      pickupLatLng = data.pickupLatLng || null;
+      nextAddrId = data.nextAddrId || (addresses.length + 1);
+      nextVolId = data.nextVolId || (volunteers.length + 1);
+      if (data.pickupAddr) {
+        const el = document.getElementById('pickup-addr');
+        if (el) el.value = data.pickupAddr;
+      }
+      currentAssignments = null;
+      if (data.assignments) {
+        currentAssignments = {};
+        Object.keys(data.assignments).forEach(k => {
+          currentAssignments[parseInt(k)] = data.assignments[k];
+        });
+      }
+      const statusEl = document.getElementById('pickup-status');
+      if (statusEl) statusEl.innerHTML = pickupLatLng
+        ? '<span class="geo-status geo-ok">✓ מאומת</span>' : '';
+      renderAddressTable();
+      renderVolTable();
+      if (currentAssignments && volunteers.length > 0) {
+        hydrateAssignments();
+        const vols = [...volunteers].sort((a,b) => b.max - a.max);
+        const totalPkgs = addresses.reduce((s,a) => s + a.pkgs, 0);
+        renderDistribution(currentAssignments, vols, totalPkgs);
+        switchTab('distribute');
+      }
+      saveData();
+      toast('✓ יובאו ' + addresses.length + ' כתובות ו-' + volunteers.length + ' מתנדבים');
+    } catch(err) {
+      toast('שגיאה בקובץ: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+// ===================== IMPORT FROM TEXT =====================
+function openImportText() {
+  document.body.insertAdjacentHTML('beforeend',
+    '<div class="transfer-modal-overlay" id="import-text-overlay" onclick="if(event.target===this)closeImportText()">' +
+    '<div class="import-modal">' +
+    '<h3>📥 ייבוא כתובות מטקסט</h3>' +
+    '<div class="import-hint">' +
+    '<strong>פורמט: שורה לכל כתובת</strong>' +
+    'שם | כתובת | חבילות &nbsp;&nbsp;או&nbsp;&nbsp; שם | טלפון | כתובת | חבילות<br><br>' +
+    'משפחת כהן | רחוב הרצל 5, באר שבע | 1<br>' +
+    'משפחת לוי | 050-1234567 | שדרות רגר 22, באר שבע | 2<br>' +
+    'ישראל ישראלי | רחוב הנגב 10, שכונת ד' +
+    '</div>' +
+    '<textarea class="import-textarea" id="import-text-area" placeholder="הדבק כאן את הרשימה..." oninput="previewImportText()"></textarea>' +
+    '<div class="import-preview" id="import-preview"></div>' +
+    '<div style="display:flex;gap:9px;justify-content:space-between;align-items:center">' +
+    '<label style="display:flex;align-items:center;gap:7px;font-size:0.85rem;cursor:pointer">' +
+    '<input type="checkbox" id="import-append" checked>' +
+    '<span style="color:var(--text-muted)">הוסף לרשימה קיימת</span>' +
+    '</label>' +
+    '<div style="display:flex;gap:9px">' +
+    '<button class="btn btn-ghost" onclick="closeImportText()">ביטול</button>' +
+    '<button class="btn btn-primary" id="import-text-btn" onclick="confirmImportText()">✓ ייבא</button>' +
+    '</div></div>' +
+    '</div></div>');
+}
+
+function closeImportText() { document.getElementById('import-text-overlay')?.remove(); }
+
+function parseImportLines(text) {
+  const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0 && !l.startsWith('#'));
+  const parsed = [], errors = [];
+  lines.forEach((line, i) => {
+    let parts;
+    if (line.includes('|')) parts = line.split('|').map(p => p.trim());
+    else if (line.includes('\t')) parts = line.split('\t').map(p => p.trim());
+    else parts = [line.trim()];
+
+    if (parts.length === 1 && parts[0]) {
+      parsed.push({ name: 'משפחה', street: parts[0], phone: '', pkgs: 1 });
+    } else if (parts.length >= 2) {
+      const name = parts[0] || 'משפחה';
+      // Auto-detect if parts[1] looks like a phone number
+      const looksLikePhone = p => /^[\d\-\+\s\(\)]{7,15}$/.test(p.trim());
+      let street, phone, pkgs;
+      if (parts.length >= 3 && looksLikePhone(parts[1])) {
+        // Format: שם | טלפון | כתובת | חבילות
+        phone = parts[1];
+        street = parts[2];
+        pkgs = Math.min(Math.max(parseInt(parts[3]) || 1, 1), 10);
+      } else {
+        // Format: שם | כתובת | חבילות
+        phone = '';
+        street = parts[1];
+        pkgs = Math.min(Math.max(parseInt(parts[2]) || 1, 1), 10);
+      }
+      if (!street) { errors.push('שורה ' + (i+1) + ': כתובת חסרה'); return; }
+      parsed.push({ name, street, phone, pkgs });
+    }
+  });
+  return { parsed, errors };
+}
+
+function previewImportText() {
+  const text = document.getElementById('import-text-area')?.value || '';
+  const preview = document.getElementById('import-preview');
+  const btn = document.getElementById('import-text-btn');
+  if (!text.trim()) { if(preview) preview.innerHTML = ''; return; }
+  const { parsed, errors } = parseImportLines(text);
+  let html = '';
+  if (parsed.length > 0) html += '<span class="ok">✓ ' + parsed.length + ' כתובות זוהו</span>';
+  if (errors.length > 0) html += (html ? ' &nbsp;' : '') + '<span class="warn">⚠ ' + errors.length + ' שגיאות</span>';
+  if (preview) preview.innerHTML = html;
+  if (btn) btn.disabled = parsed.length === 0;
+}
+
+function confirmImportText() {
+  const text = document.getElementById('import-text-area')?.value || '';
+  const append = document.getElementById('import-append')?.checked;
+  const { parsed, errors } = parseImportLines(text);
+  if (parsed.length === 0) { toast('לא זוהו כתובות תקינות'); return; }
+  if (!append) addresses = [];
+  parsed.forEach(p => {
+    addresses.push({ id: nextAddrId++, name: p.name, street: p.street, phone: p.phone||'', pkgs: p.pkgs,
+      lat: null, lng: null, geoStatus: 'pending' });
+  });
+  closeImportText();
+  renderAddressTable();
+  saveData();
+  const msg = errors.length > 0
+    ? 'יובאו ' + parsed.length + ' כתובות (' + errors.length + ' שגיאות הושמטו)'
+    : '✓ יובאו ' + parsed.length + ' כתובות';
+  toast(msg);
+}
+
+// ===================== EDIT ADDRESS =====================
+function openEditAddress(id) {
+  const a = addresses.find(x=>x.id===id);
+  if (!a) return;
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="transfer-modal-overlay" id="edit-addr-overlay" onclick="if(event.target===this)closeEditAddress()">
+      <div class="transfer-modal">
+        <h3>✏️ עריכת כתובת</h3>
+        <label>שם</label>
+        <input id="ea-name" type="text" style="width:100%;font-family:Heebo,sans-serif;font-size:0.93rem;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;background:var(--cream);margin-bottom:12px" value="${escHtml(a.name)}">
+        <label>טלפון</label>
+        <input id="ea-phone" type="text" style="width:100%;font-family:Heebo,sans-serif;font-size:0.93rem;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;background:var(--cream);margin-bottom:12px" value="${escHtml(a.phone||'')}">
+        <label>כתובת</label>
+        <input id="ea-street" type="text" style="width:100%;font-family:Heebo,sans-serif;font-size:0.93rem;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;background:var(--cream);margin-bottom:12px" value="${escHtml(a.street)}">
+        <label>חבילות</label>
+        <input id="ea-pkgs" type="number" min="1" max="10" style="width:100%;font-family:Heebo,sans-serif;font-size:0.93rem;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;background:var(--cream);margin-bottom:16px" value="${a.pkgs}">
+        <div class="btn-row">
+          <button class="btn btn-ghost" onclick="closeEditAddress()">ביטול</button>
+          <button class="btn btn-primary" onclick="saveEditAddress(${id})">✓ שמור</button>
+        </div>
+      </div>
+    </div>`);
+}
+function closeEditAddress() { document.getElementById('edit-addr-overlay')?.remove(); }
+async function saveEditAddress(id) {
+  const a = addresses.find(x=>x.id===id);
+  if (!a) return;
+  const newStreet = document.getElementById('ea-street').value.trim();
+  a.name = document.getElementById('ea-name').value.trim() || a.name;
+  a.phone = document.getElementById('ea-phone').value.trim();
+  const streetChanged = newStreet && newStreet !== a.street;
+  if (streetChanged) { a.street = newStreet; a.geoStatus = 'loading'; a.lat = null; a.lng = null; }
+  a.pkgs = parseInt(document.getElementById('ea-pkgs').value) || a.pkgs;
+  closeEditAddress();
+  renderAddressTable();
+  saveData();
+  toast('כתובת עודכנה' + (streetChanged ? ' – מאמת...' : ''));
+  if (streetChanged) {
+    const res = await geocode(newStreet);
+    if (res) { a.lat = res.lat; a.lng = res.lng; a.geoStatus = 'ok'; }
+    else { a.geoStatus = 'fail'; }
+    renderAddressTable();
+    saveData();
+  }
+}
+
+// ===================== EDIT VOLUNTEER =====================
+function openEditVolunteer(id) {
+  const v = volunteers.find(x=>x.id===id);
+  if (!v) return;
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="transfer-modal-overlay" id="edit-vol-overlay" onclick="if(event.target===this)closeEditVolunteer()">
+      <div class="transfer-modal">
+        <h3>✏️ עריכת מתנדב</h3>
+        <label>שם</label>
+        <input id="ev-name" type="text" style="width:100%;font-family:Heebo,sans-serif;font-size:0.93rem;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;background:var(--cream);margin-bottom:12px" value="${escHtml(v.name)}">
+        <label>טלפון</label>
+        <input id="ev-phone" type="text" style="width:100%;font-family:Heebo,sans-serif;font-size:0.93rem;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;background:var(--cream);margin-bottom:12px" value="${escHtml(v.phone||'')}">
+        <label>מקסימום חבילות</label>
+        <input id="ev-max" type="number" min="1" max="30" style="width:100%;font-family:Heebo,sans-serif;font-size:0.93rem;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;background:var(--cream);margin-bottom:16px" value="${v.max}">
+        <div class="btn-row">
+          <button class="btn btn-ghost" onclick="closeEditVolunteer()">ביטול</button>
+          <button class="btn btn-primary" onclick="saveEditVolunteer(${id})">✓ שמור</button>
+        </div>
+      </div>
+    </div>`);
+}
+function closeEditVolunteer() { document.getElementById('edit-vol-overlay')?.remove(); }
+function saveEditVolunteer(id) {
+  const v = volunteers.find(x=>x.id===id);
+  if (!v) return;
+  v.name = document.getElementById('ev-name').value.trim() || v.name;
+  v.phone = document.getElementById('ev-phone').value.trim();
+  v.max = parseInt(document.getElementById('ev-max').value) || v.max;
+  closeEditVolunteer();
+  renderVolTable();
+  saveData();
+  toast('פרטי המתנדב עודכנו');
+}
+
+// ===================== TOGGLE DELIVERED =====================
+function toggleDelivered(addrId) {
+  const a = addresses.find(x=>x.id===addrId);
+  if (!a) return;
+  a.delivered = !a.delivered;
+  saveData();
+  // Re-render distribution panel without re-running algorithm
+  const vols = [...volunteers].sort((a,b)=>b.max-a.max);
+  const totalPkgs = addresses.reduce((s,x)=>s+x.pkgs,0);
+  if (currentAssignments) renderDistribution(currentAssignments, vols, totalPkgs);
+  renderAddressTable();
+  toast(a.delivered ? `✓ ${a.name} – סומן כנמסר` : `${a.name} – סימון בוטל`);
+}
+
+// ===================== EXPORT / IMPORT JSON =====================
+function exportData() {
+  const payload = {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    pickupAddr: document.getElementById('pickup-addr')?.value || '',
+    pickupLatLng,
+    addresses,
+    volunteers,
+    nextAddrId,
+    nextVolId,
+    assignments: currentAssignments || null
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const d = new Date();
+  a.download = `חלוקת-פסח-${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('הנתונים יוצאו לקובץ JSON ✓');
+}
+
+function importDataFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.addresses || !data.volunteers) throw new Error('פורמט לא תקין');
+      addresses = data.addresses || [];
+      volunteers = data.volunteers || [];
+      pickupLatLng = data.pickupLatLng || null;
+      nextAddrId = data.nextAddrId || (addresses.length + 1);
+      nextVolId = data.nextVolId || (volunteers.length + 1);
+      if (data.pickupAddr) {
+        const el = document.getElementById('pickup-addr');
+        if (el) el.value = data.pickupAddr;
+      }
+      if (data.assignments) {
+        currentAssignments = {};
+        Object.keys(data.assignments).forEach(k => {
+          currentAssignments[parseInt(k)] = data.assignments[k];
+        });
+      } else {
+        currentAssignments = null;
+      }
+      // Restore pickup status
+      const statusEl = document.getElementById('pickup-status');
+      if (statusEl) statusEl.innerHTML = pickupLatLng
+        ? '<span class="geo-status geo-ok">✓ מאומת</span>' : '';
+      renderAddressTable();
+      renderVolTable();
+      // (hydration now handled in loadData)
+      saveData();
+      toast(`✓ יובאו ${addresses.length} כתובות ו-${volunteers.length} מתנדבים`);
+    } catch(err) {
+      toast('שגיאה בקובץ: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = ''; // allow re-import of same file
+}
+
+// ===================== IMPORT FROM TEXT =====================
+function openImportText() {
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="transfer-modal-overlay" id="import-text-overlay" onclick="if(event.target===this)closeImportText()">
+      <div class="import-modal">
+        <h3>📥 ייבוא כתובות מטקסט</h3>
+        <div class="import-hint">
+          <strong>פורמט: שורה לכל כתובת (מפריד: |)</strong>
+          שם | כתובת | חבילות<br>
+          שם | טלפון | כתובת | חבילות<br>
+          <br>
+          משפחת כהן | רחוב הרצל 5, באר שבע | 1<br>
+          משפחת לוי | 050-1234567 | שדרות רגר 22, באר שבע | 2<br>
+          ישראל ישראלי | רחוב הנגב 10, שכונת ד
+        </div>
+        <textarea class="import-textarea" id="import-text-area"
+          placeholder="הדבק כאן את הרשימה..."
+          oninput="previewImportText()"></textarea>
+        <div class="import-preview" id="import-preview"></div>
+        <div class="btn-row" style="display:flex;gap:9px;justify-content:space-between;align-items:center">
+          <label style="display:flex;align-items:center;gap:7px;font-size:0.85rem;cursor:pointer">
+            <input type="checkbox" id="import-append" checked>
+            <span style="color:var(--text-muted)">הוסף לרשימה קיימת</span>
+          </label>
+          <div style="display:flex;gap:9px">
+            <button class="btn btn-ghost" onclick="closeImportText()">ביטול</button>
+            <button class="btn btn-primary" id="import-text-btn" onclick="confirmImportText()">✓ ייבא</button>
+          </div>
+        </div>
+      </div>
+    </div>`);
+}
+
+function closeImportText() { document.getElementById('import-text-overlay')?.remove(); }
+
+function parseImportLines(text) {
+  const lines = text.split('\n').map(l=>l.trim()).filter(l=>l.length>0 && !l.startsWith('#'));
+  const parsed = [], errors = [];
+  lines.forEach((line, i) => {
+    // Support | or TAB or double-space as separator
+    let parts;
+    if (line.includes('|')) parts = line.split('|').map(p=>p.trim());
+    else if (line.includes('\t')) parts = line.split('\t').map(p=>p.trim());
+    else parts = [line.trim()]; // just an address with no name
+
+    if (parts.length === 1) {
+      // Only address
+      parsed.push({ name: 'משפחה', street: parts[0], pkgs: 1 });
+    } else if (parts.length >= 2) {
+      const name = parts[0] || 'משפחה';
+      const street = parts[1];
+      const pkgs = parseInt(parts[2]) || 1;
+      if (!street) { errors.push(`שורה ${i+1}: כתובת חסרה`); return; }
+      parsed.push({ name, street, pkgs: Math.min(Math.max(pkgs,1),10) });
+    }
+  });
+  return { parsed, errors };
+}
+
+function previewImportText() {
+  const text = document.getElementById('import-text-area')?.value || '';
+  const preview = document.getElementById('import-preview');
+  const btn = document.getElementById('import-text-btn');
+  if (!text.trim()) { preview.innerHTML = ''; return; }
+  const { parsed, errors } = parseImportLines(text);
+  let html = '';
+  if (parsed.length > 0) html += `<span class="ok">✓ ${parsed.length} כתובות זוהו</span>`;
+  if (errors.length > 0) html += (html?' &nbsp;':'') + `<span class="warn">⚠ ${errors.length} שגיאות</span>`;
+  preview.innerHTML = html;
+  if (btn) btn.disabled = parsed.length === 0;
+}
+
+async function confirmImportText() {
+  const text = document.getElementById('import-text-area')?.value || '';
+  const append = document.getElementById('import-append')?.checked;
+  const { parsed, errors } = parseImportLines(text);
+  if (parsed.length === 0) { toast('לא זוהו כתובות תקינות'); return; }
+  if (!append) addresses = [];
+  const newAddresses = [];
+  parsed.forEach(p => {
+    const addr = { id: nextAddrId++, name: p.name, street: p.street, phone: p.phone||'', pkgs: p.pkgs,
+      lat: null, lng: null, geoStatus: 'loading' };
+    addresses.push(addr);
+    newAddresses.push(addr);
+  });
+  closeImportText();
+  renderAddressTable();
+  saveData();
+  const msg = errors.length > 0
+    ? `יובאו ${parsed.length} כתובות (${errors.length} שגיאות הושמטו) – מאמת...`
+    : `✓ יובאו ${parsed.length} כתובות – מאמת...`;
+  toast(msg, 8000);
+  for (const a of newAddresses) {
+    const res = await geocode(a.street);
+    if (res) { a.lat = res.lat; a.lng = res.lng; a.geoStatus = 'ok'; }
+    else { a.geoStatus = 'fail'; }
+    renderAddressTable();
+    await new Promise(r => setTimeout(r, 350));
+  }
+  saveData();
+  const okCount = newAddresses.filter(a => a.geoStatus === 'ok').length;
+  const failCount = newAddresses.filter(a => a.geoStatus === 'fail').length;
+  toast(`אימות הושלם: ${okCount} ✓${failCount ? ', ' + failCount + ' ✗' : ''}`);
+}
+
+// ===================== EDIT ADDRESS =====================
+function openEditAddress(id) {
+  const a = addresses.find(x=>x.id===id);
+  if (!a) return;
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="transfer-modal-overlay" id="edit-addr-overlay" onclick="if(event.target===this)closeEditAddress()">
+      <div class="transfer-modal">
+        <h3>✏️ עריכת כתובת</h3>
+        <label>שם</label>
+        <input id="ea-name" type="text" style="width:100%;font-family:Heebo,sans-serif;font-size:0.93rem;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;background:var(--cream);margin-bottom:12px" value="${escHtml(a.name)}">
+        <label>טלפון</label>
+        <input id="ea-phone" type="text" style="width:100%;font-family:Heebo,sans-serif;font-size:0.93rem;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;background:var(--cream);margin-bottom:12px" value="${escHtml(a.phone||'')}">
+        <label>כתובת</label>
+        <input id="ea-street" type="text" style="width:100%;font-family:Heebo,sans-serif;font-size:0.93rem;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;background:var(--cream);margin-bottom:12px" value="${escHtml(a.street)}">
+        <label>חבילות</label>
+        <input id="ea-pkgs" type="number" min="1" max="10" style="width:100%;font-family:Heebo,sans-serif;font-size:0.93rem;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;background:var(--cream);margin-bottom:16px" value="${a.pkgs}">
+        <div class="btn-row">
+          <button class="btn btn-ghost" onclick="closeEditAddress()">ביטול</button>
+          <button class="btn btn-primary" onclick="saveEditAddress(${id})">✓ שמור</button>
+        </div>
+      </div>
+    </div>`);
+}
+function closeEditAddress() { document.getElementById('edit-addr-overlay')?.remove(); }
+async function saveEditAddress(id) {
+  const a = addresses.find(x=>x.id===id);
+  if (!a) return;
+  const newStreet = document.getElementById('ea-street').value.trim();
+  a.name = document.getElementById('ea-name').value.trim() || a.name;
+  a.phone = document.getElementById('ea-phone').value.trim();
+  const streetChanged = newStreet && newStreet !== a.street;
+  if (streetChanged) { a.street = newStreet; a.geoStatus = 'loading'; a.lat = null; a.lng = null; }
+  a.pkgs = parseInt(document.getElementById('ea-pkgs').value) || a.pkgs;
+  closeEditAddress();
+  renderAddressTable();
+  saveData();
+  toast('כתובת עודכנה' + (streetChanged ? ' – מאמת...' : ''));
+  if (streetChanged) {
+    const res = await geocode(newStreet);
+    if (res) { a.lat = res.lat; a.lng = res.lng; a.geoStatus = 'ok'; }
+    else { a.geoStatus = 'fail'; }
+    renderAddressTable();
+    saveData();
+  }
+}
+
+// ===================== EDIT VOLUNTEER =====================
+function openEditVolunteer(id) {
+  const v = volunteers.find(x=>x.id===id);
+  if (!v) return;
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="transfer-modal-overlay" id="edit-vol-overlay" onclick="if(event.target===this)closeEditVolunteer()">
+      <div class="transfer-modal">
+        <h3>✏️ עריכת מתנדב</h3>
+        <label>שם</label>
+        <input id="ev-name" type="text" style="width:100%;font-family:Heebo,sans-serif;font-size:0.93rem;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;background:var(--cream);margin-bottom:12px" value="${escHtml(v.name)}">
+        <label>טלפון</label>
+        <input id="ev-phone" type="text" style="width:100%;font-family:Heebo,sans-serif;font-size:0.93rem;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;background:var(--cream);margin-bottom:12px" value="${escHtml(v.phone||'')}">
+        <label>מקסימום חבילות</label>
+        <input id="ev-max" type="number" min="1" max="30" style="width:100%;font-family:Heebo,sans-serif;font-size:0.93rem;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;background:var(--cream);margin-bottom:16px" value="${v.max}">
+        <div class="btn-row">
+          <button class="btn btn-ghost" onclick="closeEditVolunteer()">ביטול</button>
+          <button class="btn btn-primary" onclick="saveEditVolunteer(${id})">✓ שמור</button>
+        </div>
+      </div>
+    </div>`);
+}
+function closeEditVolunteer() { document.getElementById('edit-vol-overlay')?.remove(); }
+function saveEditVolunteer(id) {
+  const v = volunteers.find(x=>x.id===id);
+  if (!v) return;
+  v.name = document.getElementById('ev-name').value.trim() || v.name;
+  v.phone = document.getElementById('ev-phone').value.trim();
+  v.max = parseInt(document.getElementById('ev-max').value) || v.max;
+  closeEditVolunteer();
+  renderVolTable();
+  saveData();
+  toast('פרטי המתנדב עודכנו');
+}
+
+// ===================== TOGGLE DELIVERED =====================
+function toggleDelivered(addrId) {
+  const a = addresses.find(x=>x.id===addrId);
+  if (!a) return;
+  a.delivered = !a.delivered;
+  saveData();
+  const vols = [...volunteers].sort((a,b)=>b.max-a.max);
+  const totalPkgs = addresses.reduce((s,x)=>s+x.pkgs,0);
+  if (currentAssignments) renderDistribution(currentAssignments, vols, totalPkgs);
+  renderAddressTable();
+  toast(a.delivered ? `✓ ${a.name} – סומן כנמסר` : `${a.name} – סימון בוטל`);
+}
+
+// ===================== UTILS =====================
+function escHtml(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ===================== INIT =====================
+loadData();
+renderAddressTable();
+renderVolTable();
+// Restore pickup status
+if (pickupLatLng) {
+  document.getElementById('pickup-status').innerHTML = '<span class="geo-status geo-ok">✓ מאומת</span>';
+} else if (document.getElementById('pickup-addr')?.value) {
+  geocodePickup();
+}
+// Restore distribution results if saved
+if (currentAssignments && volunteers.length > 0) {
+  const vols = [...volunteers].sort((a,b)=>b.max-a.max);
+  const totalPkgs = addresses.reduce((s,a)=>s+a.pkgs,0);
+  switchTab('distribute');
+  renderDistribution(currentAssignments, vols, totalPkgs);
+}
+</script>
+</body>
+</html>
